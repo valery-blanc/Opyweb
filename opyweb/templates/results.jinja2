@@ -1,0 +1,172 @@
+{% extends "layout2.jinja2" %}
+
+{% block content %}
+ <section class="content">
+
+        <div class="container-fluid">
+
+                       <!-- Basic Card -->
+            <!-- #END# Basic Card -->
+
+
+
+    <div class="row clearfix">
+                        <!-- Line Chart -->
+
+
+                <!-- #END# Line Chart -->
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="body">
+                <h2><p id="simuDate"></p></h2>
+
+
+                <p id="allResults"></p>
+                <p id="constantDictList"></p>
+            </div>
+        </div>
+    </div>
+    </div>
+
+              <div id="chartcontainer" class="row clearfix"></div>
+
+
+
+</div>
+
+
+<script>
+
+function display(index)
+{
+var toplot = getPlotArrays(index);
+var mystrategy = res["allResults"][index];
+var assetSymbol = mystrategy["assetSymbol"];
+var gainproba = mystrategy["gainproba"].toFixed(2);
+var maxloss = mystrategy["maxloss"].toFixed(2);
+var legs = toplot["legs"];
+var strategytext = "";
+
+
+
+
+
+for (const leg of legs){
+    console.log(leg);
+    var symbol = leg["symbol"];
+    var l = symbol.length;
+    strategytext = strategytext + leg["buysell"].replace('b', 'buy').replace('s', 'sell')
+                    + '&nbsp;'
+                    + leg["multiplier"]
+                    + '&nbsp;'
+                    + leg["flag"].replace('p', 'put').replace('c', 'call')
+                    + '&nbsp;K='
+                    + leg["strike"]
+                    + '&nbsp;exp:20'
+                    + symbol.substring(l-15, l-13) + '-' + symbol.substring(l-13, l-11) + '-' + symbol.substring(l-11, l-9)
+                    + '&nbsp;price:&nbsp;$'
+                    + leg["price"]
+                    + '<br/>'
+    }
+
+var constantDict = res["constantDictList"][assetSymbol];
+var assetPrice = constantDict["assetPrice"];
+
+var chartdiv = document.createElement('div');
+document.getElementById("chartcontainer").appendChild(chartdiv);
+var myhtml = '<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><div class="card"><div class="header"><h2>#'
+                + (index +1)
+                +'&nbsp;-&nbsp;'
+                + assetSymbol
+                + '<small>gain hope:&nbsp;'
+                + gainproba
+                + '<br>max loss:&nbsp;'
+                + maxloss
+                + '</small>'
+                + '</h2></div><div class="body"><div id="chart'
+                + index
+                + '"></div><small>'
+                + strategytext
+                + '</small></div></div></div>';
+
+
+chartdiv.innerHTML =myhtml;
+var zeros = [];
+
+for (const element of toplot["zero_crossings"]) {
+  zeros.push({value: element, text: element.toFixed(2)});
+}
+zeros.push({value: assetPrice, text: 'last price'});
+
+
+var chart = c3.generate({
+    bindto: '#chart'+index,
+    data: {
+      x: "stockPrice",
+      json: {
+            stockPrice: toplot["stockPriceRange"],
+            totalGain: toplot["totalGain"],
+            proba: toplot["proba"]
+        },
+        types:{
+          totalGain: 'line',
+          proba: 'area'
+        },
+        axes: {
+            totalGain: 'y',
+            proba: 'y2'
+        }
+    },
+    axis: {
+        x: {label: {text: 'asset price', position: 'outer-center'}},
+        y: {label: {text: 'gain', position: 'outer-middle'}},
+        y2: {show: true, label: {text: 'asset price proba', position: 'outer-middle'}},
+        },
+    point:{r: 0.2},
+    grid: {x: {lines: zeros} ,  y: {lines: [{value: 0.0, text: ''}]}  },
+    zoom: {  enabled: true}
+    }
+    );
+}
+
+ function displayAll()
+     {
+     console.log("----displayAll");
+     var allresults = res["allResults"]
+     if (allresults == null || allresults.length == 0) return;
+     i = 0;
+     console.log("allresults "+allresults);
+     for (const myresult of allresults) {
+         console.log("display "+i);
+         display(i);
+         i++;
+         }
+
+     }
+
+
+var res = JSON.parse(localStorage.getItem('res'));
+
+console.log("----results");
+
+console.log(res);
+
+
+var d = new Date(res["simuDate"]);
+
+
+
+
+//document.getElementById("allResults").innerHTML = "<pre>"+JSON.stringify(res["allResults"], null, 3)+"</pre>";
+//document.getElementById("constantDictList").innerHTML = "<pre>"+JSON.stringify(res["constantDictList"], null, 3)+"</pre>";
+document.getElementById("simuDate").innerHTML = "<pre>"+d.toLocaleString("en-GB");+"</pre>";
+
+
+
+$(window).load(displayAll());
+</script>
+
+
+</section>
+{% endblock content %}
+

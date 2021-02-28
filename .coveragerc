@@ -1,0 +1,3 @@
+[run]
+source = opyweb
+omit = opyweb/test*

@@ -1,0 +1,363 @@
+{% extends "layout2.jinja2" %}
+
+{% block content %}
+ <section class="content">
+        <div class="container-fluid">
+            <div class="block-header">
+                <h2>
+                    INPUT DATAS
+
+                </h2>
+            </div>
+            <div class="row jsdemo-notification-button">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div id="clock" class="header">
+                            <h2>
+                                STOCK TICKER SYMBOL LIST
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="#" onclick="clearTradierCache();return false;">Clear Tradier cache</a></li>
+
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div  class="body">
+                            <div class="col-sm-3">
+                            <div class="form-group form-float form-group-sm">
+                                        <div class="form-line">
+                                            <input id="assetsymbols" type="text" class="form-control" />
+                                            <label class="form-label">Enter stock symbol coma separated. Ex: AAPL,TSLA,CAT</label>
+                                        </div>
+                            </div>
+                            </div>
+							<button id="buttonaddrows" type="button" class="btn btn-primary waves-effect " onclick="addRows();">Add</button>
+
+                            <table id="mainTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Symbol</th>
+                                        <th>Prev. Close</th>
+                                        <th>Last price</th>
+                                        <th>Volatility</th>
+                                        <th>Range start</th>
+                                        <th>Range end</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mainTableBody">
+                               </tbody>
+
+                            </table>
+
+                            <small>Double-click to edit table fields.</small>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<div class="container-fluid">
+
+    <div class="row clearfix jsdemo-notification-button">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="body">
+
+            <button class="btn btn-primary waves-effect" type="button" onclick="launchSimu()">Launch simulation</button>
+            <button id="viewresults" class="btn btn-primary waves-effect" type="button"  disabled="disabled" onclick="window.open('/results')">View results</button>
+
+
+                <br><br>
+
+                  <div  class="progress">
+                                <div id="progressbar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                    0%
+                                </div>
+                            </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+     <form>
+ <div class="container-fluid">
+     <div class="block-header">
+                <h2>
+                    SETTINGS
+
+                </h2>
+            </div>
+            <!-- General -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                GENERAL
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);" onclick="$('.alert').show();return false;">Action</a></li>
+                                        <li><a href="javascript:void(0);">Another action</a></li>
+                                        <li><a href="javascript:void(0);">Something else here</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body">
+
+                            <div class="row clearfix">
+                                <div class="col-sm-12">
+                                    <div class="alert alert-warning collapse" role="alert">
+  This is a warning alert—check it out!<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+                                </div>
+                                <div class="col-sm-1">
+                                   <h2 class="card-inside-title">Acceptable loss</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="acceptablelossvalue" type="text" class="form-control" placeholder="Acceptable loss" value="10.0"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1">
+                                    <div class="demo-radio-button">
+                                        <input name="acceptablelosstype" value="value" type="radio" id="radio_0" class="with-gap radio-col-orange " />
+                                        <label for="radio_0">Value</label>
+                                        <input name="acceptablelosstype" value="percent" type="radio" id="radio_1" class="with-gap radio-col-deep-orange" checked />
+                                        <label for="radio_1">Percentage of asset price</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <h2 class="card-inside-title">Maximum results per asset</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="max_results" type="text" class="form-control" placeholder="Maximum results per asset" value="10"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <h2 class="card-inside-title">Start date for history</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="HistoricalDistributionFrom" type="text" id="date-fr" value="2020-01-01" class="form-control"  placeholder="Please choose a date...">
+                                        </div>
+                                    </div>
+                                </div>
+                               <div class="col-sm-2">
+                                    <h2 class="card-inside-title">Nb. of points in range</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="range_width" type="text"  value=100 class="form-control"  placeholder="Nb. of points in range">
+                                        </div>
+                                    </div>
+                                </div>
+                               <div class="col-sm-2">
+                                    <h2 class="card-inside-title">Server URL</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="base_url" id="base_url" onchange="changeBaseUrl()" type="text"  value="http://www.zitoon.com:8000" class="form-control"  placeholder="Nb. of points in range">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# General -->
+
+            <!-- Option filters -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                OPTION FILTERS
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);">Action</a></li>
+                                        <li><a href="javascript:void(0);">Another action</a></li>
+                                        <li><a href="javascript:void(0);">Something else here</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body">
+                            <div class="row clearfix">
+                                <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Number of legs</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="nb_legs" type="text" class="form-control" placeholder="Number of legs" value="3"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Number of expiration dates</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="number_of_expirations" type="text" class="form-control" placeholder="Number of expiration dates" value="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Min. days to first expiration</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="min_expiration_days" type="text" class="form-control" placeholder="Min. days to first expiration" value="5"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Nb. of strikes by side</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="number_of_strikes_by_side" type="text" class="form-control" placeholder="Nb. of strikes by side" value="7"/>
+                                        </div>
+                                    </div>
+                                </div>
+                               <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Strikes too close</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="nb_too_close" type="text" class="form-control" placeholder="Strikes to close" value="2"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                   <h2 class="card-inside-title">Strike interval</h2>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input name="strike_interval" type="text" class="form-control" placeholder="Strike interval" value="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">multipliers</h2>
+                                    <div class="demo-checkbox">
+                                        <input type="checkbox" name="sm[]" value="1" id="md_checkbox_21" class="filled-in chk-col-deep-orange"  />
+                                        <label for="md_checkbox_21">1</label>
+                                        <input type="checkbox" name="sm[]" value="2" id="md_checkbox_22" class="filled-in chk-col-deep-orange" checked />
+                                        <label for="md_checkbox_22">2</label>
+                                        <input type="checkbox" name="sm[]" value="3" id="md_checkbox_23" class="filled-in chk-col-deep-orange" checked />
+                                        <label for="md_checkbox_23">3</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">in the money option types</h2>
+                                    <div class="demo-radio-button">
+                                        <input name="on_money_types" value="call" type="radio" id="im_0" class="with-gap radio-col-orange " />
+                                        <label for="im_0">calls only</label>
+                                        <input name="on_money_types" value="put" type="radio" id="im_1" class="with-gap radio-col-orange " />
+                                        <label for="im_1">puts only</label>
+                                        <input name="on_money_types" value="callput" type="radio" id="im_2" class="with-gap radio-col-deep-orange" checked />
+                                        <label for="im_2">calls and puts</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">out of the money option types</h2>
+                                    <div class="demo-radio-button">
+                                        <input name="out_of_money_types" value="call" type="radio" id="oom_0" class="with-gap radio-col-orange " />
+                                        <label for="oom_0">calls only</label>
+                                        <input name="out_of_money_types" value="put" type="radio" id="oom_1" class="with-gap radio-col-orange " />
+                                        <label for="oom_1">puts only</label>
+                                        <input name="out_of_money_types" value="callput" type="radio" id="oom_2" class="with-gap radio-col-deep-orange" checked />
+                                        <label for="oom_2">calls and puts</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Option filters -->
+           <!-- Estimates -->
+            <div class="row clearfix">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                ESTIMATES
+                            </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);">Action</a></li>
+                                        <li><a href="javascript:void(0);">Another action</a></li>
+                                        <li><a href="javascript:void(0);">Something else here</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="body">
+                            <div class="row clearfix">
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">Close stock price estimate</h2>
+                                    <select name="stockProbabilityShape" class="form-control show-tick">
+                                        <option value="real">Real</option>
+                                        <option value="gaussian">Gaussian</option>
+                                        <option value="M-shape">M-Shape</option>
+                                        <option value="flat">Flat</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">Open option price estimate</h2>
+                                    <select name="buysellprice" class="form-control show-tick">
+                                        <option value="worst">Sell at bid price, buy at ask price</option>
+                                        <option value="mid ">Sell & buy at mid price</option>
+                                        <option value="last">Sel & buy at last price</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h2 class="card-inside-title">Option implicit volatility estimate</h2>
+                                    <select name="sigmatype" class="form-control show-tick">
+                                        <option value="bsm">Black-Scholes-Merton model</option>
+                                        <option value="mid">mid-iv (present time)</option>
+                                        <option value="worst">bid-iv and ask-iv (present time)</option>
+                                    </select>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #END# Estimates -->
+
+        </div>
+</form>
+
+    </section>
+{% endblock content %}
+
