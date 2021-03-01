@@ -12,7 +12,7 @@ $(function () {
 
 function showNotification(colorName, text, placementFrom, placementAlign, animateEnter, animateExit) {
     if (colorName === null || colorName === '') { colorName = 'bg-black'; }
-    if (text === null || text === '') { text = 'Turning standard Bootstrap alerts'; }
+    if (text === null || text === '') { return; }
     if (animateEnter === null || animateEnter === '') { animateEnter = 'animated fadeInDown'; }
     if (animateExit === null || animateExit === '') { animateExit = 'animated fadeOutUp'; }
     var allowDismiss = true;

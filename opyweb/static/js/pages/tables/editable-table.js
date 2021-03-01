@@ -5,6 +5,9 @@ $(function () {
 
 });
 
+
+
+
 $.fn.getForm2obj = function() {
   var _ = {};
   $.map(this.serializeArray(), function(n) {
@@ -27,7 +30,40 @@ $('form input').change(function() {
   console.log($('form').getForm2obj());
 });
 
-
+function sortTable(index) {
+  var table, rows, switching, i, x, y, shouldSwitch;
+  table = document.getElementById('mainTable');
+  switching = true;
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[index];
+      y = rows[i + 1].getElementsByTagName("TD")[index];
+      //check if the two rows should switch place:
+      if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+        //if so, mark as a switch and break the loop:
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
+  }
+}
 
 function jsonstringtonumber (myjson)
     {
@@ -187,16 +223,46 @@ function launchSimu()
 		console.log ("--------- done")
 		document.getElementById("viewresults").disabled = false;
 		}
-	
+
+function getExistingAssetList(){
+    var items=[];
+
+    //Iterate all td's in first column
+    $('#mainTable tbody tr td:nth-child(1)').each( function(){
+    //add item to array
+    items.push( $(this).text() );
+    });
+
+    //restrict array to unique items
+    var items = $.unique( items );
+    return items;
+	}
+
 
 function addRows()
         {
-            console.log("BASE_URL="+BASE_URL);
-
             var $loading = $('#clock').waitMe({effect: 'timer',text: '',bg: 'rgba(255,255,255,0.90)',color: '#555'});
+
+            console.log("BASE_URL="+BASE_URL);
+            var existingAssetList = getExistingAssetList();
+            console.log (existingAssetList);
 		    //Close price 	Last price 	Volatility 	Range start 	Range end
-			var assetsymbols = document.getElementById("assetsymbols").value.split(",");
+			var assetsymbols = document.getElementById("assetsymbols").value.toUpperCase().split(",");
+            var assetsymbols = $.unique( assetsymbols );
+			for (var i = assetsymbols.length - 1; i >= 0; i--) {
+                if (existingAssetList.indexOf(assetsymbols[i])> -1) {
+                assetsymbols.splice(i, 1);
+                }
+            }
+
 			var l = assetsymbols.length;
+			if (l == 0)
+			    {
+			    $loading.waitMe('hide');
+			    return;
+			    }
+
+
 			var i = 0;
 			assetsymbols.forEach(function(assetsymbol){
 			    jQuery.support.cors = true;
@@ -208,8 +274,7 @@ function addRows()
                 });
 
 				$.getJSON(BASE_URL+'/gettabledatas?assetSymbol='+assetsymbol, function(data) {
-					//alert(data.closeprice)
-					//alert (assetsymbol);
+
 					if (data.error != '') {
 					    alert (data.error);
 					    }
@@ -222,12 +287,11 @@ function addRows()
 					                             +"</td><td>"+data.rangeend.toFixed(2)
 					                             +"<td class='btnDelete' ><i class='material-icons'>delete</i></td></tr>");
 					$('#mainTable').editableTableWidget();
-					//$('#mainTable').editableTableWidget().numericInputExample().find('td:first').focus();
                     $('.removeclick').bind('dblclick',function(e){ e.stopPropagation(); e.preventDefault();return true;})
                     $("#mainTable").on('click', '.btnDelete', function () {$(this).closest('tr').remove();});
                     }
                     i ++;
-                    if (i == l) $loading.waitMe('hide');
+                    if (i == l) { $loading.waitMe('hide'); }
 				});
 				
 			});

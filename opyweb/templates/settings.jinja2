@@ -33,7 +33,7 @@
                             <div class="form-group form-float form-group-sm">
                                         <div class="form-line">
                                             <input id="assetsymbols" type="text" class="form-control" />
-                                            <label class="form-label">Enter stock symbol coma separated. Ex: AAPL,TSLA,CAT</label>
+                                            <label class="form-label">AAPL,TSLA,CAT</label>
                                         </div>
                             </div>
                             </div>
@@ -42,13 +42,13 @@
                             <table id="mainTable" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Symbol</th>
-                                        <th>Prev. Close</th>
-                                        <th>Last price</th>
-                                        <th>Volatility</th>
-                                        <th>Range start</th>
-                                        <th>Range end</th>
-                                        <th></th>
+                                        <th onclick="sortTable(0);">Symbol</th>
+                                        <th onclick="sortTable(1);">Prev. Close</th>
+                                        <th onclick="sortTable(2);">Last price</th>
+                                        <th onclick="sortTable(3);">Volatility</th>
+                                        <th onclick="sortTable(4);">Range start</th>
+                                        <th onclick="sortTable(5);">Range end</th>
+                                        <th onclick="sortTable(6);"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="mainTableBody">
@@ -214,7 +214,7 @@
                                    <h2 class="card-inside-title">Number of legs</h2>
                                     <div class="form-group">
                                         <div class="form-line">
-                                            <input name="nb_legs" type="text" class="form-control" placeholder="Number of legs" value="3"/>
+                                            <input name="nb_legs" type="text" class="form-control" placeholder="Number of legs" value="4"/>
                                         </div>
                                     </div>
                                 </div>

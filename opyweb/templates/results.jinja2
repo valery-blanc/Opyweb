@@ -96,7 +96,7 @@ var zeros = [];
 for (const element of toplot["zero_crossings"]) {
   zeros.push({value: element, text: element.toFixed(2)});
 }
-zeros.push({value: assetPrice, text: 'last price'});
+zeros.push({value: assetPrice, text: 'last price '+assetPrice});
 
 
 var chart = c3.generate({
