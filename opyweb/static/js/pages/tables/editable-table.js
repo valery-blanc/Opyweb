@@ -3,6 +3,8 @@ var BASE_URL = 'http://www.zitoon.com:8000'
 $(function () {
     $('#mainTable').editableTableWidget();
     $(".alert").hide()
+    wol()
+    check()
 });
 
 
@@ -78,9 +80,8 @@ function jsonstringtonumber (myjson)
 
 
 
-function getResult (baseUrl, apiName, myjson)
+function getResult (baseUrl, apiName, myjson, mytimeout = 0)
     {
-
 	jQuery.support.cors = true;
 	$.ajaxSetup({
            headers : { 'Access-Control-Allow-Origin': '*',
@@ -90,7 +91,8 @@ function getResult (baseUrl, apiName, myjson)
        });
     var res  = {}
     var url = baseUrl + "/"+apiName
-    console.log (url);
+    console.log ("url "+url);
+    console.log ("timeout "+mytimeout);
 
     $.ajax(url, {
            headers: { 'Access-Control-Allow-Origin': '*',
@@ -106,12 +108,80 @@ function getResult (baseUrl, apiName, myjson)
                //console.log ("getResult done : ");
                //console.log (data);
                res =  data;
-               }
+               },
+           timeout: mytimeout
            });
     return res ;
 
 
     }
+
+
+function check ()
+    {
+    var apiName = "check"
+    var mytimeout = 800
+	jQuery.support.cors = true;
+	$.ajaxSetup({
+           headers : { 'Access-Control-Allow-Origin': '*',
+                       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+                       'Access-Control-Allow-Headers': 'X-PINGOTHER, Content-Type',
+                       'Access-Control-Max-Age': 86400}
+       });
+    var res  = {}
+    var url = BASE_URL + "/"+apiName
+    console.log ("url "+url);
+    console.log ("timeout "+mytimeout);
+
+    $.ajax(url, {
+           headers: { 'Access-Control-Allow-Origin': '*',
+                       'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+                       'Access-Control-Allow-Headers': 'X-PINGOTHER, Content-Type',
+                       'Access-Control-Max-Age': 86400},
+
+           data : JSON.stringify({}),
+           contentType : 'application/json',
+           type : 'POST',
+           async: true,
+           success: function (data) {
+               console.log ("check done success : ");
+               console.log (data);
+               $('#serverstate').html('<span class="label bg-green">Server ON</span>');
+               },
+           error: function (data, textStatus, errorThrown) {
+               console.log ("check done error");
+               restartWS()
+           },
+
+           timeout: mytimeout
+           });
+
+    }
+
+function wol()
+    {
+    var data = getResult ("", "wol", {});
+    console.log ("wake server");
+    console.log (data);
+    }
+
+function restartWS()
+    {
+    var data = getResult ("", "serverstate", {});
+    console.log ("restartWS");
+    console.log (data);
+    if (data["res"])
+        {
+        $('#serverstate').html('<span class="label bg-green">Server ON</span>');
+        }
+    else
+        {
+        wol();
+        setTimeout(function(){ $('#serverstate').html('<span class="label bg-orange">Starting server...</span>');},5000);
+        restartWS();
+        }
+    }
+
 
 function clearTradierCache()
     {
@@ -135,6 +205,13 @@ function getPlotArrays(index)
     console.log (jsonres);
     var data = getResult (BASE_URL, "getplotarrays", jsonres);
 
+    return data;
+
+    }
+
+function checkWS()
+    {
+    var data = getResult (BASE_URL, "check", {}, 800);
     return data;
 
     }

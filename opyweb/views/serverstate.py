@@ -6,7 +6,7 @@ def startService():
     hostname = "192.168.1.36"
     username = "Val"
     password = "Manon888"
-    cmd = 'net stop OpyService && net start OpyService'
+    cmd = 'net stop OpyService &  net start OpyService'
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -18,8 +18,8 @@ def startService():
         stdin, stdout, stderr = ssh.exec_command(cmd)
         err = ''.join(stderr.readlines())
         out = ''.join(stdout.readlines())
-        final_output = str(out)+str(err)
-        return final_output
+        print (f"err={err}, out={out}")
+        return {"out":str(out), "err":str(err)}
     except paramiko.AuthenticationException:
         print("Failed to connect to %s due to wrong username/password" %hostname)
         exit(1)
@@ -32,7 +32,12 @@ def startService():
 
 @view_config(route_name='serverstate', renderer='json')
 def serverstate_view(request):
+    print ("try to restart service")
     final_output = startService()
-    return {'res': final_output}
+    res = False
+    if "started successfully" in final_output["out"]:
+        res = True
+        print ("service restarted")
+    return {'res': res, "final_output" : final_output}
 
 
