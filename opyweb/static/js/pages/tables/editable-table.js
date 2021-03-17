@@ -2,7 +2,7 @@ var BASE_URL = 'http://www.zitoon.com:8000'
 
 $(function () {
     $('#mainTable').editableTableWidget();
-
+    $(".alert").hide()
 });
 
 
@@ -117,7 +117,9 @@ function clearTradierCache()
     {
     var data = getResult (BASE_URL, "cleartradiercache", {});
     //data-placement-from="top" data-placement-align="right" data-animate-enter="animated rotateInUpRight"     data-animate-exit="animated rotateOutUpRight"
-    showNotification('alert-success', 'cache cleared', 'top', 'right', 'animated rotateInUpRight', 'animated rotateOutUpRight')
+
+    showTableAlert ('Tradier cache cleared','success')
+    //showNotification('alert-success', 'cache cleared', 'top', 'right', 'animated rotateInUpRight', 'animated rotateOutUpRight')
     return data;
     }
 
@@ -216,7 +218,7 @@ function launchSimu()
         res["simuDate"] = simuDate
         console.log (res)
         console.log("_____ sort ____")
-        res['allResults'].sort(function(a, b) {return parseFloat(b.gainproba) - parseFloat(a.gainproba);});
+        res['allResults'].sort(function(a, b) {return parseFloat(b['gainproba']) - parseFloat(a['gainproba']);});
         console.log (res)
 
         localStorage.setItem('res', JSON.stringify(res));
@@ -237,24 +239,39 @@ function getExistingAssetList(){
     var items = $.unique( items );
     return items;
 	}
+function showTableAlert (text,type)
+    {
 
+    if  (!text || 0 === text.length) return;
+    $('#tablealerts'+type).html(text) ;
+    $('#tablealerts'+type).fadeIn();
+
+    }
+
+function emptyTable()
+    {
+    $("#mainTable > tbody").empty();
+    }
 
 function addRows()
         {
             var $loading = $('#clock').waitMe({effect: 'timer',text: '',bg: 'rgba(255,255,255,0.90)',color: '#555'});
-
+            $('.alert').hide()
+            var errorResume = ''
             console.log("BASE_URL="+BASE_URL);
             var existingAssetList = getExistingAssetList();
             console.log (existingAssetList);
 		    //Close price 	Last price 	Volatility 	Range start 	Range end
-			var assetsymbols = document.getElementById("assetsymbols").value.toUpperCase().split(",");
+		    var assetSymbolString = document.getElementById("assetsymbols").value.toUpperCase().replace(/[^a-zA-Z0-9,]/g, '');
+		    console.log ("assetSymbolString="+assetSymbolString);
+			var assetsymbols = assetSymbolString.split(",");
             var assetsymbols = $.unique( assetsymbols );
 			for (var i = assetsymbols.length - 1; i >= 0; i--) {
-                if (existingAssetList.indexOf(assetsymbols[i])> -1) {
+                if (existingAssetList.indexOf(assetsymbols[i])> -1 || assetsymbols[i].length < 1 ) {
                 assetsymbols.splice(i, 1);
                 }
             }
-
+            console.log (assetsymbols);
 			var l = assetsymbols.length;
 			if (l == 0)
 			    {
@@ -276,7 +293,8 @@ function addRows()
 				$.getJSON(BASE_URL+'/gettabledatas?assetSymbol='+assetsymbol, function(data) {
 
 					if (data.error != '') {
-					    alert (data.error);
+					    errorResume = errorResume +  data.error + '<br>';
+					    showTableAlert (errorResume,'warning');
 					    }
 					else {
 					$("#mainTable > tbody").append("<tr><td class='removeclick' >"+data.symbol
@@ -289,15 +307,14 @@ function addRows()
 					$('#mainTable').editableTableWidget();
                     $('.removeclick').bind('dblclick',function(e){ e.stopPropagation(); e.preventDefault();return true;})
                     $("#mainTable").on('click', '.btnDelete', function () {$(this).closest('tr').remove();});
+
                     }
                     i ++;
-                    if (i == l) { $loading.waitMe('hide'); }
+                    if (i == l) { $loading.waitMe('hide');  }
 				});
 				
 			});
 
         }
 		
-		
-//$('#mainTable').editableTableWidget().numericInputExample().find('td:first').focus();
 		

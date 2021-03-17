@@ -1,4 +1,4 @@
-{% extends "layout2.jinja2" %}
+{% extends "layout.jinja2" %}
 
 {% block content %}
  <section class="content">
@@ -19,6 +19,8 @@
         <div class="card">
             <div class="body">
                 <h2><p id="simuDate"></p></h2>
+                    <p></p><button  type="button" class="btn btn-primary waves-effect " onclick="sortAndDisplay('gainproba');">Sort by gain hope</button></p>
+                    <p></p><button  type="button" class="btn btn-primary waves-effect " onclick="sortAndDisplay('maxloss');">Sort by max loss</button></p>
 
 
                 <p id="allResults"></p>
@@ -43,6 +45,7 @@ var toplot = getPlotArrays(index);
 var mystrategy = res["allResults"][index];
 var assetSymbol = mystrategy["assetSymbol"];
 var gainproba = mystrategy["gainproba"].toFixed(2);
+var cost = toplot["cost"].toFixed(2);
 var maxloss = mystrategy["maxloss"].toFixed(2);
 var legs = toplot["legs"];
 var strategytext = "";
@@ -74,14 +77,32 @@ var assetPrice = constantDict["assetPrice"];
 
 var chartdiv = document.createElement('div');
 document.getElementById("chartcontainer").appendChild(chartdiv);
+
+var zeros = [];
+var zeroHtml = 'Zeros : '
+for (const element of toplot["zero_crossings"]) {
+  percent = (100 * (element - assetPrice) / assetPrice).toFixed(2)
+  zeroHtml += element.toFixed(2) + ' ('+percent+'%)&nbsp;'
+  zeros.push({value: element, text: element.toFixed(2)});
+}
+zeros.push({value: assetPrice, text: ''});
+
+
+
 var myhtml = '<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><div class="card"><div class="header"><h2>#'
                 + (index +1)
                 +'&nbsp;-&nbsp;'
                 + assetSymbol
+                +'&nbsp;-&nbsp;$'
+                + assetPrice
                 + '<small>gain hope:&nbsp;'
                 + gainproba
-                + '<br>max loss:&nbsp;'
+                + '&nbsp;net cost:&nbsp;'
+                + cost
+                + '&nbsp;max loss:&nbsp;'
                 + maxloss
+                + '<br>'
+                + zeroHtml
                 + '</small>'
                 + '</h2></div><div class="body"><div id="chart'
                 + index
@@ -91,12 +112,6 @@ var myhtml = '<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12"><div class="card
 
 
 chartdiv.innerHTML =myhtml;
-var zeros = [];
-
-for (const element of toplot["zero_crossings"]) {
-  zeros.push({value: element, text: element.toFixed(2)});
-}
-zeros.push({value: assetPrice, text: 'last price '+assetPrice});
 
 
 var chart = c3.generate({
@@ -143,6 +158,18 @@ var chart = c3.generate({
          }
 
      }
+function sortAndDisplay(sortkey)
+    {
+    res['allResults'].sort(function(a, b) {return parseFloat(b[sortkey]) - parseFloat(a[sortkey]);});
+    localStorage.setItem('res', JSON.stringify(res));
+
+    alert ("1");
+    $("#chartcontainer").empty();
+        alert ("2");
+
+    displayAll();
+
+    }
 
 
 var res = JSON.parse(localStorage.getItem('res'));

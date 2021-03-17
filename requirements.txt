@@ -1,2 +1,4 @@
 pyramid
 waitress
+wakeonlan
+paramiko
