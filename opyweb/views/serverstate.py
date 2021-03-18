@@ -17,7 +17,7 @@ def shutdown():
     hostname = "192.168.1.36"
     username = "Val"
     password = "Manon888"
-    cmd = 'shutdown /f'
+    cmd = 'shutdown /s'
     res = ssh(hostname, username, password, cmd)
     return res
 

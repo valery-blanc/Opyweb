@@ -2,13 +2,14 @@ var BASE_URL = 'http://www.zitoon.com:8000'
 
 $(function () {
     $('#mainTable').editableTableWidget();
-    $(".alert").hide()
-    $("#buttonaddrows").keyup(function(event) {
+    $(".alert").hide();
+    $("#assetsymbols").keyup(function(event) {
     if (event.keyCode === 13) {
-        $("#buttonaddrows").click();
-            }
-        });
-    wol()
+        console.log ("ret pressed");
+        addRows();
+        }
+    });
+    wol();
     serveron = checkServer();
     serviceon = checkService();
 });
