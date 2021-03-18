@@ -3,8 +3,14 @@ var BASE_URL = 'http://www.zitoon.com:8000'
 $(function () {
     $('#mainTable').editableTableWidget();
     $(".alert").hide()
+    $("#buttonaddrows").keyup(function(event) {
+    if (event.keyCode === 13) {
+        $("#buttonaddrows").click();
+            }
+        });
     wol()
-    check()
+    serveron = checkServer();
+    serviceon = checkService();
 });
 
 
@@ -80,7 +86,7 @@ function jsonstringtonumber (myjson)
 
 
 
-function getResult (baseUrl, apiName, myjson, mytimeout = 0)
+function getResult (baseUrl, apiName, myjson, timeout = 0)
     {
 	jQuery.support.cors = true;
 	$.ajaxSetup({
@@ -92,7 +98,7 @@ function getResult (baseUrl, apiName, myjson, mytimeout = 0)
     var res  = {}
     var url = baseUrl + "/"+apiName
     console.log ("url "+url);
-    console.log ("timeout "+mytimeout);
+    console.log ("timeout "+timeout);
 
     $.ajax(url, {
            headers: { 'Access-Control-Allow-Origin': '*',
@@ -109,7 +115,7 @@ function getResult (baseUrl, apiName, myjson, mytimeout = 0)
                //console.log (data);
                res =  data;
                },
-           timeout: mytimeout
+           timeout: timeout
            });
     return res ;
 
@@ -117,10 +123,8 @@ function getResult (baseUrl, apiName, myjson, mytimeout = 0)
     }
 
 
-function check ()
+function getAsyncResult (url, successFunction, errorFunction, timeout = 800)
     {
-    var apiName = "check"
-    var mytimeout = 800
 	jQuery.support.cors = true;
 	$.ajaxSetup({
            headers : { 'Access-Control-Allow-Origin': '*',
@@ -129,9 +133,8 @@ function check ()
                        'Access-Control-Max-Age': 86400}
        });
     var res  = {}
-    var url = BASE_URL + "/"+apiName
     console.log ("url "+url);
-    console.log ("timeout "+mytimeout);
+    console.log ("timeout "+timeout);
 
     $.ajax(url, {
            headers: { 'Access-Control-Allow-Origin': '*',
@@ -143,20 +146,106 @@ function check ()
            contentType : 'application/json',
            type : 'POST',
            async: true,
-           success: function (data) {
-               console.log ("check done success : ");
-               console.log (data);
-               $('#serverstate').html('<span class="label bg-green">Server ON</span>');
-               },
-           error: function (data, textStatus, errorThrown) {
-               console.log ("check done error");
-               restartWS()
-           },
-
-           timeout: mytimeout
+           success: successFunction,
+           error: errorFunction,
+           timeout: timeout
            });
 
     }
+
+
+function restartServer()
+{
+    $('#serverstate').html('<span class="label bg-orange">Sarting Server...</span>');
+
+    var url = "wait_server_up"
+    var res = getAsyncResult (url,
+    function (data) {
+               console.log ("check server done success : ");
+               console.log (data);
+               $('#serverstate').html('<span class="label bg-green">Server ON</span>');
+               restartService();
+               return true;
+               },
+    function (data, textStatus, errorThrown) {
+               console.log ("check server done error");
+               $('#serverstate').html('<span class="label bg-red">Server OFF</span>');
+               return false;
+           },
+    60000
+    );
+    return res;
+}
+
+function checkServer()
+{
+    $('#serverstate').html('<span class="label bg-red">Server OFF</span>');
+
+    var url = "ping"
+    var res = getAsyncResult (url,
+    function (data) {
+               console.log ("check server done success : ");
+               console.log (data);
+               $('#serverstate').html('<span class="label bg-green">Server ON</span>');
+               return true;
+               },
+    function (data, textStatus, errorThrown) {
+               console.log ("check server done error");
+               $('#serverstate').html('<span class="label bg-red">Server OFF</span>');
+               restartServer();
+               return false;
+           },
+    800
+    );
+    return res;
+}
+
+
+
+
+function checkService()
+{
+    var apiName = "check"
+    var url = BASE_URL + "/"+apiName
+    var res = getAsyncResult (url,
+    function (data) {
+               console.log ("check service done success : ");
+               console.log (data);
+               $('#servicestate').html('<span class="label bg-green">Service ON</span>');
+               return true;
+               },
+    function (data, textStatus, errorThrown) {
+               console.log ("check service done error");
+               $('#servicestate').html('<span class="label bg-red">Service OFF</span>');
+               restartService();
+               return false;
+           }
+    );
+    return res;
+}
+
+
+function restartService()
+{
+    $('#servicestate').html('<span class="label bg-orange">Sarting Service...</span>');
+    var url = "restartservice"
+    var res = getAsyncResult (url,
+    function (data) {
+               console.log ("restart service done success : ");
+               console.log (data);
+               $('#servicestate').html('<span class="label bg-green">Service ON</span>');
+               return true;
+               },
+    function (data, textStatus, errorThrown) {
+               console.log ("restart service done error");
+               $('#servicestate').html('<span class="label bg-red">Service OFF</span>');
+               return false;
+           },
+    10000
+    );
+    return res;
+}
+
 
 function wol()
     {
@@ -165,22 +254,6 @@ function wol()
     console.log (data);
     }
 
-function restartWS()
-    {
-    var data = getResult ("", "serverstate", {});
-    console.log ("restartWS");
-    console.log (data);
-    if (data["res"])
-        {
-        $('#serverstate').html('<span class="label bg-green">Server ON</span>');
-        }
-    else
-        {
-        wol();
-        setTimeout(function(){ $('#serverstate').html('<span class="label bg-orange">Starting server...</span>');},5000);
-        restartWS();
-        }
-    }
 
 
 function clearTradierCache()
@@ -209,12 +282,7 @@ function getPlotArrays(index)
 
     }
 
-function checkWS()
-    {
-    var data = getResult (BASE_URL, "check", {}, 800);
-    return data;
 
-    }
 
 function changeBaseUrl()
     {

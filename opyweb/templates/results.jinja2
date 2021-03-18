@@ -4,7 +4,12 @@
  <section class="content">
 
         <div class="container-fluid">
+            <div class="block-header">
+                <h2>
+                    RESULTS&nbsp;<span id="simuDate"></span>
 
+                </h2>
+            </div>
                        <!-- Basic Card -->
             <!-- #END# Basic Card -->
 
@@ -18,7 +23,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
             <div class="body">
-                <h2><p id="simuDate"></p></h2>
+
                     <p></p><button  type="button" class="btn btn-primary waves-effect " onclick="sortAndDisplay('gainproba');">Sort by gain hope</button></p>
                     <p></p><button  type="button" class="btn btn-primary waves-effect " onclick="sortAndDisplay('maxloss');">Sort by max loss</button></p>
 
@@ -186,7 +191,7 @@ var d = new Date(res["simuDate"]);
 
 //document.getElementById("allResults").innerHTML = "<pre>"+JSON.stringify(res["allResults"], null, 3)+"</pre>";
 //document.getElementById("constantDictList").innerHTML = "<pre>"+JSON.stringify(res["constantDictList"], null, 3)+"</pre>";
-document.getElementById("simuDate").innerHTML = "<pre>"+d.toLocaleString("en-GB");+"</pre>";
+document.getElementById("simuDate").innerHTML = d.toLocaleString("en-GB");
 
 
 

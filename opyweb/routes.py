@@ -4,4 +4,7 @@ def includeme(config):
     config.add_route('settings', '/settings')
     config.add_route('results', '/results')
     config.add_route('wol', '/wol')
-    config.add_route('serverstate', '/serverstate')
+    config.add_route('restartservice', '/restartservice')
+    config.add_route('wait_server_up', '/wait_server_up')
+    config.add_route('ping', '/ping')
+    config.add_route('shutdown', '/shutdown')

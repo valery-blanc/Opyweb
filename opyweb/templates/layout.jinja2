@@ -91,14 +91,16 @@ Version: 1.0.5
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
-                <a class="navbar-brand" href="index.html">Home</a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
+                <a class="navbar-brand" href="/">Home</a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="navbar-collapse">
+               <ul class="nav navbar-nav navbar-right">
                     <!-- Call Search -->
                     <!-- #END# Call Search -->
                     <!-- Notifications -->
                     <!-- #END# Notifications -->
+
                     <!-- Tasks -->
                     <!-- #END# Tasks -->
                     <li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="material-icons">more_vert</i></a></li>
@@ -159,9 +161,7 @@ Version: 1.0.5
             <!-- #Menu -->
             <!-- Footer -->
             <div class="legal">
-                <div id="serverstate" class="copyright">
-                   <span class="label bg-red">Server OFF</span>
-                </div>
+
                 <div class="copyright">
                     &copy; 2020 <a href="javascript:void(0);"></a>
                 </div>
@@ -316,7 +316,19 @@ Version: 1.0.5
         </aside>
         <!-- #END# Right Sidebar -->
     </section>
+    <section class="content">
 
+                    <div id="servicestate" class="pull-right"><span class="label bg-red">Service OFF</span></div>
+                    <div class="pull-right">&nbsp;&nbsp;&nbsp;</div>
+                    <div id="serverstate" class="pull-right"><span class="label bg-red">Server OFF</span></div>
+
+
+
+
+
+
+
+    </section>
 {% block content %}
                 <p>No content</p>
             {% endblock content %}

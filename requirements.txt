@@ -2,3 +2,4 @@ pyramid
 waitress
 wakeonlan
 paramiko
+ping3
