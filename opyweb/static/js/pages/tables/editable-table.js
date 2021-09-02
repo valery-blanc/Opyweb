@@ -11,7 +11,6 @@ $(function () {
     });
     wol();
     serveron = checkServer();
-    serviceon = checkService();
 });
 
 
@@ -188,6 +187,7 @@ function checkServer()
                console.log ("check server done success : ");
                console.log (data);
                $('#serverstate').html('<span class="label bg-green">Server ON</span>');
+               checkService();
                return true;
                },
     function (data, textStatus, errorThrown) {
