@@ -12,7 +12,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH" && pip install --no-cache-dir -r requir
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 COPY opyweb ./opyweb/
 COPY opyweb.egg-info ./opyweb.egg-info/
-COPY .coveragerc ./.coveragerc/
+#COPY .coveragerc ./.coveragerc/
 COPY *.ini *.in setup.py ./
 
 RUN pip install -e .

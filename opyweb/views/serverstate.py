@@ -5,16 +5,19 @@ import ping3
 from wakeonlan import send_magic_packet
 import paramiko
 
+SERVICEIP="192.168.0.215"
+
+
 def restartService():
 
-    hostname = "192.168.1.36"
+    hostname = SERVICEIP
     username = "Val"
     password = "Manon888"
     cmd = 'net stop OpyService &  net start OpyService'
     ssh(hostname, username, password, cmd)
 
 def shutdown():
-    hostname = "192.168.1.36"
+    hostname = SERVICEIP
     username = "Val"
     password = "Manon888"
     cmd = 'shutdown /s'
@@ -65,7 +68,7 @@ def restart_service_view(request):
 def ping_view(request):
     print ("ping")
     res = True
-    response = ping3.ping('192.168.1.36',  timeout=1)
+    response = ping3.ping(SERVICEIP,  timeout=1)
     if response == None:
         res = False
     return {'res': res}
@@ -73,11 +76,11 @@ def ping_view(request):
 
 @view_config(route_name='wait_server_up', renderer='json')
 def wait_server_up_view(request):
-    send_magic_packet('30.9C.23.A7.8E.67', ip_address='192.168.0.215', port=9)
+    send_magic_packet('30.9C.23.A7.8E.67', ip_address=SERVICEIP, port=9)
     s = time.time()
     e = time.time()
     while e - s < 120:
-        response = ping3.ping('192.168.1.36', timeout=1)
+        response = ping3.ping(SERVICEIP, timeout=1)
         if response == None:
             print (".")
             time.sleep(2)
@@ -89,8 +92,8 @@ def wait_server_up_view(request):
 
 @view_config(route_name='wol', renderer='json')
 def wol_view(request):
-    response = ping3.ping('192.168.1.36', timeout=1)
+    response = ping3.ping(SERVICEIP, timeout=1)
     if response == None:
-        send_magic_packet('30.9C.23.A7.8E.67', ip_address='192.168.0.215', port=9)
+        send_magic_packet('30.9C.23.A7.8E.67', ip_address=SERVICEIP, port=9)
         return {'res': 'sent'}
     return {'res': 'up'}
